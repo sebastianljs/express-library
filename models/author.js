@@ -20,6 +20,6 @@ AuthorSchema.virtual('url').get(
         return '/catalog/author/' + this._id;
     }
 );
-
-module.exports = mongoose.model('Author', AuthorSchema);
+const Author = mongoose.model('Author', AuthorSchema);
+module.exports = Author;
 
