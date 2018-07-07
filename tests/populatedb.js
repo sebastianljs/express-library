@@ -22,7 +22,7 @@ mongoose.connect(mongodb).then(
 const authors = [];
 const genres = [];
 const books = [];
-const bookinstances = [];
+const bookInstances = [];
 
 const authorCreate = (first_name, family_name, d_birth, d_death, cb) => {
     const authorDetail = {
@@ -31,14 +31,15 @@ const authorCreate = (first_name, family_name, d_birth, d_death, cb) => {
     };
     if (d_birth) {
         authorDetail.date_of_birth = d_birth;
-    };
-    if(d_death) {
+    }
+    ;
+    if (d_death) {
         authorDetail.date_of_death = d_death;
     }
     const author = new Author(authorDetail);
     author.save(
         (err) => {
-            if(err) {
+            if (err) {
                 cb(err, null);
                 return
             }
@@ -46,6 +47,18 @@ const authorCreate = (first_name, family_name, d_birth, d_death, cb) => {
             authors.push(author)
         }
     )
+};
+
+const genreCreate = (name, cb) => {
+    const genre = new Genre({name: name});
+    genre.save((err) => {
+        if (err) {
+            cb(err, null);
+        }
+        console.log('New Genre: ' + genre);
+        genres.push(genre);
+        cb(null, genre);
+    })
 };
 
 const bookCreate = (title, summary, isbn, author, genre, cb) => {
@@ -56,7 +69,7 @@ const bookCreate = (title, summary, isbn, author, genre, cb) => {
         isbn: isbn
     };
     if (genre) {
-      bookDetail.genre = genre;
+        bookDetail.genre = genre;
     }
     const book = new Book(bookDetail);
     book.save(
@@ -69,5 +82,62 @@ const bookCreate = (title, summary, isbn, author, genre, cb) => {
             cb(null, book);
         }
     )
+};
+
+const bookInstanceCreate = (book, imprint, due_back, status, cb) => {
+    const bookInstanceDetail = {
+        book: book,
+        imprint: imprint
+    };
+    if (due_back) {
+        bookInstanceDetail.due_back = due_back;
+    }
+    if (status) {
+        bookInstanceDetail.status = status;
+    }
+    const bookInstance = new BookInstance(bookInstanceDetail);
+    bookInstance.save(
+        (err) => {
+            if (err) {
+                console.log('Error creating BookInstance: ' + bookInstance);
+                cb(err, null);
+            }
+            console.log('New BookInstance: ' + bookInstance);
+            bookInstances.push(bookInstance);
+            cb(null, book);
+        }
+    )
+};
+
+const createGenreAuthors = (cb) => {
+    async.parallel([
+        (callback) => {
+            authorCreate('Patrick', 'Rothfuss', '1973-06-06', null, callback);
+        },
+        (callback) => {
+            authorCreate('Ben', 'Bova', '1932-11-8', null, callback);
+        },
+        (callback) => {
+            authorCreate('Isaac', 'Asimov', '1920-01-02', '1992-04-06', callback);
+        },
+        (callback) => {
+            authorCreate('Bob', 'Billings', null, null, callback);
+        },
+        (callback) => {
+            authorCreate('Jim', 'Jones', '1971-12-16', null, callback);
+        }], cb)
+};
+
+const createGenres = (cb) => {
+    async.parallel([
+        (callback) => {
+            genreCreate('Fantasy', callback);
+        },
+        (callback) => {
+            genreCreate('Science Fiction', callback);
+        },
+        (callback) => {
+            genreCreate('French Poetry', callback);
+        }], cb)
 };
 
