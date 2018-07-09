@@ -34,10 +34,10 @@ const authorCreate = (first_name, family_name, d_birth, d_death, cb) => {
         (err) => {
             if (err) {
                 cb(err, null);
-                return
             }
             console.log('New author: ' + author);
-            authors.push(author)
+            authors.push(author);
+            cb(null, author);
         }
     )
 };
@@ -200,6 +200,8 @@ const createBookInstances = (cb) => {
 mongoose.connect(mongodb).then(
     (res) => {
         const db = res.connection;
+        db.on('error',
+            console.error.bind(console, 'MongoDB error:'));
         async.series([
             createAuthors,
             createGenres,
@@ -213,7 +215,7 @@ mongoose.connect(mongodb).then(
                 db.close();
             })
     }
-).catch(() => {
-    console.error.bind(console, 'MongoDB connection error: ');
+).catch((err) => {
+    console.error.bind(console, 'MongoDB connection error: ' + err);
 });
 
