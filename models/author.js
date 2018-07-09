@@ -10,13 +10,13 @@ const AuthorSchema = new Schema(
     }
 );
 AuthorSchema.virtual('name').get(
-    () => {
-        return this.family_name + ", " + this.first_name;
+    function() {
+        return this.first_name + ', ' + this.family_name;
     }
 );
 
 AuthorSchema.virtual('url').get(
-    () => {
+    function() {
         return '/catalog/author/' + this._id;
     }
 );

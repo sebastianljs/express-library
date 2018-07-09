@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const BookInstanceSchema = new Schema (
     {
-        book: {type: Schema.ObjectId, ref: 'book', required: true},
+        book: {type: Schema.ObjectId, ref: 'Book', required: true},
         imprint: {type: String, required: true},
         status: {type: String, required: true,
             enum: ['Available', "Maintenance", "Loaned", "Reserved"],
@@ -12,9 +12,10 @@ const BookInstanceSchema = new Schema (
     }
 );
 
-BookInstanceSchema.virtual('url')
-.get(() => {
-   return '/catalog/bookinstance' + this._id
-});
+BookInstanceSchema.virtual('url').get(
+    function() {
+        return '/catalog/bookinstance' + this._id;
+    }
+);
 const BookInstance = mongoose.model('BookInstance', BookInstanceSchema);
 module.exports = BookInstance;
