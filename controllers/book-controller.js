@@ -38,7 +38,31 @@ exports.bookList = (req, res, next) => {
 
 // Display detail page for a specific book.
 exports.bookDetail = (req, res) => {
-    res.send('NOT IMPLEMENTED: Book detail: ' + req.params.id);
+    async.parallel({
+        book: (cb) => {
+            Book.findById(req.params.id)
+                .populate('author')
+                .populate('genre')
+                .exec(cb)
+        },
+        bookInstances: (cb) => {
+            BookInstance.find({'book': req.params.id})
+                .exec(cb)
+        }
+    },
+        (err, results) => {
+            if (err) { return next(err)}
+            if (results.book === null) {
+                const err = new Error('Book not found');
+                err.status = 404;
+                return next(err)
+            }
+            res.render('book-detail', {
+                title: 'Title',
+                book: results.book,
+                bookInstances: results.bookInstances
+            })
+        })
 };
 
 // Display book create form on GET.
