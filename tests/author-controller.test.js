@@ -6,10 +6,6 @@ require('sinon-mongoose');
 
 describe('author-controller route tests',
     () => {
-    beforeEach(() => {
-    });
-    afterEach(() => {
-    });
     it('should list all authors', () => {
         const author1 = {
             first_name: 'Isaac',
